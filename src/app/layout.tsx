@@ -19,13 +19,40 @@ const creepster = Creepster({
   weight: "400",
 });
 
+const siteUrl = "https://candymap.vercel.app";
+const shareTitle = "CandyMap 🎃 | Discover the Best Halloween Candy";
+const shareDescription =
+  "Explore Halloween houses, rate candy, and discover the best trick-or-treat spots in your neighborhood.";
+const shareImage = {
+  url: `${siteUrl}/og-image.png`,
+  width: 1200,
+  height: 630,
+  alt: "CandyMap, a Halloween map for discovering the best candy in your neighborhood",
+  type: "image/png",
+} as const;
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: {
     default: "CandyMap",
     template: "%s · CandyMap",
   },
-  description: "Discover the best candy in your neighborhood",
+  description: shareDescription,
   applicationName: "CandyMap",
+  openGraph: {
+    type: "website",
+    url: `${siteUrl}/`,
+    siteName: "CandyMap",
+    title: shareTitle,
+    description: shareDescription,
+    images: [shareImage],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: shareTitle,
+    description: shareDescription,
+    images: [shareImage],
+  },
   appleWebApp: {
     capable: true,
     title: "CandyMap",
