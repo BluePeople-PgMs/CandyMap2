@@ -1,11 +1,10 @@
-import { ScreenPlaceholder } from "@/components/ScreenPlaceholder";
+import type { Metadata } from "next";
+import { CandyMap } from "@/components/map/CandyMap";
+
+export const metadata: Metadata = {
+  title: "Map",
+};
 
 export default function MapPage() {
-  return (
-    <ScreenPlaceholder
-      emoji="🎃"
-      title="Map"
-      description="Nearby houses will show up here. The interactive map comes in a later step — this screen is the home of CandyMap."
-    />
-  );
+  return <CandyMap />;
 }

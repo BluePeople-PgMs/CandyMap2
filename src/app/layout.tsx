@@ -31,6 +31,10 @@ export const metadata: Metadata = {
     title: "CandyMap",
     statusBarStyle: "black-translucent",
   },
+  // iPhone Safari still looks for this name when adding a site to the Home Screen.
+  other: {
+    "apple-mobile-web-app-capable": "yes",
+  },
   formatDetection: {
     telephone: false,
   },
@@ -40,6 +44,8 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
+  // Keep forms above the iPhone keyboard instead of hiding them behind it.
+  interactiveWidget: "resizes-content",
   themeColor: "#ff7a18",
   colorScheme: "dark",
 };

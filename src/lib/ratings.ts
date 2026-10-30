@@ -36,6 +36,16 @@ export function calculateOverallFromScores(scores: RatingScores): number {
 }
 
 /**
+ * A single 1–5 star review.
+ * The stored rating still has quality, variety, and quantity, so the existing average math stays in place.
+ * The same star is written into all three.
+ */
+export function scoresFromStars(stars: number): RatingScores {
+  const score = clampScore(Math.round(stars));
+  return { quality: score, variety: score, quantity: score };
+}
+
+/**
  * Fold a new rating into existing house averages without mutating seed data.
  * Uses a running average: newAvg = (oldAvg * count + score) / (count + 1)
  */
@@ -95,6 +105,7 @@ export function applyUserRatingsToHouses(
       ...house,
       averages: { ...house.averages },
       candyTypes: [...house.candyTypes],
+      candyTags: house.candyTags ? [...house.candyTags] : undefined,
       comments: house.comments.map((comment) => ({ ...comment })),
     }));
   }
@@ -113,6 +124,7 @@ export function applyUserRatingsToHouses(
         ...house,
         averages: { ...house.averages },
         candyTypes: [...house.candyTypes],
+        candyTags: house.candyTags ? [...house.candyTags] : undefined,
         comments: house.comments.map((comment) => ({ ...comment })),
       };
     }
@@ -144,6 +156,7 @@ export function applyUserRatingsToHouses(
     return {
       ...house,
       candyTypes: [...house.candyTypes],
+      candyTags: house.candyTags ? [...house.candyTags] : undefined,
       averages,
       ratingCount,
       comments,

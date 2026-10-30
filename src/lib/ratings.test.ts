@@ -5,6 +5,7 @@ import {
   calculateOverallRating,
   createRating,
   mergeAverages,
+  scoresFromStars,
 } from "./ratings.ts";
 import type { House, Rating } from "../types/index.ts";
 
@@ -36,6 +37,24 @@ describe("calculateOverallRating", () => {
 
   it("clamps out-of-range scores before averaging", () => {
     assert.equal(calculateOverallRating(9, 0, 3), 3);
+  });
+});
+
+describe("scoresFromStars", () => {
+  it("copies one star rating into every score dimension", () => {
+    assert.deepEqual(scoresFromStars(4), {
+      quality: 4,
+      variety: 4,
+      quantity: 4,
+    });
+  });
+
+  it("clamps to the 1–5 range", () => {
+    assert.deepEqual(scoresFromStars(9), {
+      quality: 5,
+      variety: 5,
+      quantity: 5,
+    });
   });
 });
 

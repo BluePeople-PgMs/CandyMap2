@@ -12,6 +12,7 @@ export {
   createRating,
   mergeAverages,
   roundToOneDecimal,
+  scoresFromStars,
 } from "./ratings";
 
 export {
@@ -39,3 +40,32 @@ export {
   getSeedNeighborhoods,
   getTopSeedHouses,
 } from "./catalog";
+
+export {
+  NEAR_DEMO_RADIUS_METERS,
+  distanceMeters,
+  isWithinRadius,
+} from "./geo";
+
+export { formatHouseName, streetAddressFromNominatim } from "./address";
+export type { StreetAddress } from "./address";
+
+export { MAP_ZOOM, readSavedMapView, writeSavedMapView } from "./map-view";
+export type { SavedMapView } from "./map-view";
+
+export {
+  getMapHouses,
+  rateHouse,
+  savePinnedHouse,
+  submitHouseRating,
+  subscribeMapHouses,
+} from "./map-houses";
+
+export {
+  DEFAULT_HOUSE_NAME,
+  PINNED_NEIGHBORHOOD_ID,
+  buildUserHouse,
+  isUserHouseId,
+  neighborhoodIdAt,
+  normalizeLongitude,
+} from "./user-houses";

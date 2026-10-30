@@ -13,8 +13,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const showNav = showsBottomNav(pathname);
 
+  // Fixed viewport: the map fills the space under the header, and the page itself does not scroll.
   return (
-    <div className="flex min-h-dvh flex-col bg-candy-black">
+    <div className="flex h-dvh flex-col overflow-hidden bg-candy-black">
       <header
         className="sticky top-0 z-40 flex items-center justify-between border-b border-candy-orange/20 bg-candy-black/90 px-4 backdrop-blur-md"
         style={{
@@ -33,7 +34,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </header>
 
       <div
-        className="flex min-h-0 flex-1 flex-col"
+        className="flex min-h-0 flex-1 flex-col overflow-hidden"
         style={{
           paddingBottom: showNav
             ? "calc(3.5rem + env(safe-area-inset-bottom))"

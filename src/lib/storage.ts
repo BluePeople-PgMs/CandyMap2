@@ -5,11 +5,13 @@ import type { Rating } from "../types";
  *
  * Architecture rules:
  * - Seed data in `src/data/` is immutable and never written back.
- * - Only user-submitted ratings live in localStorage.
- * - UI merge happens in memory via `applyUserRatingsToHouses`.
+ * - User-submitted ratings and user-pinned houses live in localStorage.
+ * - UI merge happens in memory. Seed modules are never written back.
  */
 export const STORAGE_KEYS = {
   userRatings: "candymap:user-ratings:v1",
+  userHouses: "candymap:user-houses:v1",
+  mapView: "candymap:map-view:v1",
 } as const;
 
 function canUseLocalStorage(): boolean {
@@ -43,9 +45,9 @@ export function readUserRatings(): Rating[] {
  * Persist the full user-rating list.
  * Callers should pass the complete array (append/replace in memory first).
  */
-export function writeUserRatings(ratings: readonly Rating[]): void {
+export function writeUserRatings(ratings: readonly Rating[]): boolean {
   if (!canUseLocalStorage()) {
-    return;
+    return false;
   }
 
   try {
@@ -53,8 +55,9 @@ export function writeUserRatings(ratings: readonly Rating[]): void {
       STORAGE_KEYS.userRatings,
       JSON.stringify(ratings),
     );
+    return true;
   } catch {
-    // Quota / private mode — ignore for MVP; UI can toast later.
+    return false;
   }
 }
 

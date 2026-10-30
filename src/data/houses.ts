@@ -284,15 +284,7 @@ export const MOCK_HOUSES: House[] = [
       quantity: 4.2,
       overall: 3.6,
     },
-    comments: [
-      {
-        id: "c-ss-1",
-        authorName: "Omar H.",
-        text: "Huge handfuls, mostly chips and classic pieces.",
-        createdAt: "2026-10-24T20:50:00.000Z",
-        overall: 3.6,
-      },
-    ],
+    comments: [],
   },
   {
     id: "house-witching-hour",

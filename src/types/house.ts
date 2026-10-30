@@ -1,4 +1,4 @@
-import type { CandyType } from "./candy";
+import type { CandyTag, CandyType } from "./candy";
 import type { Comment } from "./comment";
 
 /** Averaged score dimensions for a house (1–5 each). */
@@ -22,6 +22,8 @@ export type House = {
   lng: number;
   neighborhoodId: string;
   candyTypes: CandyType[];
+  /** Tags chosen when a person pins a house. Demo houses leave this empty. */
+  candyTags?: CandyTag[];
   /** Lightweight visual stand-in until we host photos. */
   photoEmoji?: string;
   ratingCount: number;

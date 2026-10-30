@@ -1,0 +1,152 @@
+.leaflet-gl-layer,
+.maplibregl-map,
+.maplibregl-canvas {
+  background: transparent;
+}
+
+.candy-leaflet.leaflet-container {
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  background: #050308;
+  font-family: inherit;
+  outline: none;
+}
+
+.candy-marker-root {
+  background: transparent;
+  border: 0;
+}
+
+.candy-marker {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  border: 2px solid #2d1458;
+  border-radius: 999px;
+  background: radial-gradient(circle at 35% 30%, #ffb067, #ff7a18 58%, #c2410c);
+  box-shadow:
+    0 0 0 4px rgba(45, 20, 88, 0.55),
+    0 8px 16px rgba(0, 0, 0, 0.45);
+  cursor: pointer;
+}
+
+.candy-marker-emoji {
+  font-size: 22px;
+  line-height: 1;
+}
+
+.candy-marker.is-selected {
+  border-color: #f4e9d8;
+  box-shadow:
+    0 0 0 5px rgba(255, 122, 24, 0.55),
+    0 0 22px rgba(255, 122, 24, 0.95);
+}
+
+.candy-marker.is-selected .candy-marker-emoji {
+  font-size: 26px;
+}
+
+.candy-marker.is-draft {
+  border-style: dashed;
+  border-color: #f4e9d8;
+  box-shadow:
+    0 0 0 6px rgba(255, 122, 24, 0.35),
+    0 0 18px rgba(255, 122, 24, 0.85);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .candy-marker.is-draft {
+    animation: candy-pin-pulse 1.4s ease-out infinite;
+  }
+}
+
+@keyframes candy-pin-pulse {
+  0% {
+    box-shadow:
+      0 0 0 4px rgba(255, 122, 24, 0.45),
+      0 0 12px rgba(255, 122, 24, 0.7);
+  }
+
+  100% {
+    box-shadow:
+      0 0 0 14px rgba(255, 122, 24, 0),
+      0 0 18px rgba(255, 122, 24, 0.2);
+  }
+}
+
+.candy-marker-root:focus,
+.candy-marker-root:focus-visible {
+  outline: 2px solid #f4e9d8;
+  outline-offset: 3px;
+}
+
+.candy-leaflet.leaflet-touch .leaflet-bar a,
+.candy-leaflet .leaflet-control-zoom a {
+  width: 44px;
+  height: 44px;
+  line-height: 42px;
+  background: rgba(5, 3, 8, 0.92);
+  color: #ff7a18;
+  border-bottom-color: rgba(255, 122, 24, 0.35);
+}
+
+.candy-leaflet .leaflet-bar {
+  border: 1px solid rgba(255, 122, 24, 0.4);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+}
+
+.candy-leaflet .leaflet-bar a:hover,
+.candy-leaflet .leaflet-bar a:focus-visible {
+  background: #2d1458;
+  color: #ffb067;
+}
+
+.candy-leaflet .leaflet-control-zoom {
+  margin-top: 12px !important;
+  margin-left: 12px !important;
+  border: 0;
+}
+
+.candy-leaflet .leaflet-control-attribution {
+  max-width: min(68vw, 280px);
+  margin: 0;
+  padding: 2px 6px;
+  border-radius: 8px 0 0 0;
+  background: rgba(5, 3, 8, 0.82);
+  color: rgba(244, 233, 216, 0.78);
+  font-size: 10px;
+  line-height: 1.35;
+  white-space: normal;
+}
+
+.candy-leaflet .leaflet-control-attribution a {
+  color: #ffb067;
+}
+
+.candy-sheet {
+  animation: candy-sheet-in 180ms ease-out;
+}
+
+@keyframes candy-sheet-in {
+  from {
+    transform: translateY(12px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .candy-sheet {
+    animation: none;
+  }
+}
