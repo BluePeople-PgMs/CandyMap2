@@ -110,8 +110,8 @@ export function HouseDetailView({
           {house.ratingCount > 0 ? (
             <div className="mt-4 space-y-2 rounded-2xl border border-candy-orange/20 bg-candy-purple/30 px-4 py-3">
               <ScoreRow label="Quality" value={house.averages.quality} />
-              <ScoreRow label="Variety" value={house.averages.variety} />
-              <ScoreRow label="Quantity" value={house.averages.quantity} />
+              <ScoreRow label="Variety" value={house.averages.quantity} />
+              <ScoreRow label="Quantity" value={house.averages.variety} />
             </div>
           ) : null}
 

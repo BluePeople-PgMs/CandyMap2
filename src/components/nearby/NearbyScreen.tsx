@@ -4,28 +4,12 @@ import { useMemo, useState, useSyncExternalStore } from "react";
 import { DEMO_MAP_CENTER } from "@/data";
 import { distanceMeters } from "@/lib/geo";
 import { getMapHouses, subscribeMapHouses } from "@/lib/map-houses";
-import { CANDY_TAG_LABELS, CANDY_TYPE_LABELS, type House } from "@/types";
-import { getNeighborhoodById } from "@/data";
-import { PINNED_NEIGHBORHOOD_ID } from "@/lib/user-houses";
+import type { House } from "@/types";
 import { HouseCard } from "@/components/house/HouseCard";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { ListSkeleton } from "@/components/ui/ListSkeleton";
 
 const EMPTY_HOUSES: House[] = [];
-
-function placeName(neighborhoodId: string): string {
-  if (neighborhoodId === PINNED_NEIGHBORHOOD_ID) {
-    return "Pinned location";
-  }
-
-  return getNeighborhoodById(neighborhoodId)?.name ?? "Pinned location";
-}
-
-function searchText(house: House): string {
-  const tags = (house.candyTags ?? []).map((tag) => CANDY_TAG_LABELS[tag]).join(" ");
-  const types = house.candyTypes.map((type) => CANDY_TYPE_LABELS[type]).join(" ");
-  return `${house.name} ${house.address} ${placeName(house.neighborhoodId)} ${tags} ${types}`.toLowerCase();
-}
 
 export function NearbyScreen() {
   const ready = useSyncExternalStore(subscribeMapHouses, () => true, () => false);
@@ -34,9 +18,7 @@ export function NearbyScreen() {
 
   const visible = useMemo(() => {
     const needle = query.trim().toLowerCase();
-    const matched = needle
-      ? houses.filter((house) => searchText(house).includes(needle))
-      : houses;
+    const matched = needle ? [] : houses;
 
     return [...matched].sort(
       (a, b) =>

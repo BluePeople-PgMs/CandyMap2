@@ -3,7 +3,7 @@ import { roundToOneDecimal } from "./ratings.ts";
 
 function compareByOverallThenCount(a: House, b: House): number {
   if (b.averages.overall !== a.averages.overall) {
-    return b.averages.overall - a.averages.overall;
+    return a.averages.overall - b.averages.overall;
   }
   if (b.ratingCount !== a.ratingCount) {
     return b.ratingCount - a.ratingCount;
