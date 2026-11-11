@@ -2,6 +2,7 @@
 
 import { useId, useState } from "react";
 import { submitHouseRating } from "@/lib/map-houses";
+import { isValidStarRatingScore } from "@/lib/ratings";
 import { Sheet } from "@/components/ui/Sheet";
 import { StarRatingPicker } from "@/components/ui/StarRatingPicker";
 
@@ -22,7 +23,28 @@ export function RatingSheet({ houseId }: { houseId: string }) {
   const [error, setError] = useState<string | null>(null);
   const [status, setStatus] = useState<string | null>(null);
 
-  const ready = quality >= 1 && variety >= 1 && quantity >= 1;
+  const ready =
+    isValidStarRatingScore(quality) &&
+    isValidStarRatingScore(variety) &&
+    isValidStarRatingScore(quantity);
+
+  function setQualityScore(stars: number) {
+    setQuality(stars);
+    setVariety((current) => (current === 0 ? stars : current));
+    setQuantity((current) => (current === 0 ? stars : current));
+  }
+
+  function setVarietyScore(stars: number) {
+    setVariety(stars);
+    setQuality((current) => (current === 0 ? stars : current));
+    setQuantity((current) => (current === 0 ? stars : current));
+  }
+
+  function setQuantityScore(stars: number) {
+    setQuantity(stars);
+    setQuality((current) => (current === 0 ? stars : current));
+    setVariety((current) => (current === 0 ? stars : current));
+  }
 
   function resetForm() {
     setQuality(0);
@@ -62,7 +84,7 @@ export function RatingSheet({ houseId }: { houseId: string }) {
       {open ? (
         <Sheet title="Rate this house" titleId={titleId} onClose={close}>
           <form
-            className="mt-4"
+            className="mt-4 flex flex-col pb-1"
             onSubmit={(event) => {
               event.preventDefault();
               if (!ready || saving) {
@@ -89,49 +111,51 @@ export function RatingSheet({ houseId }: { houseId: string }) {
               close();
             }}
           >
-            <p className="text-sm text-foreground/75">
-              Score candy quality, variety, and quantity. A comment is optional.
-            </p>
-
-            <fieldset className="mt-4">
-              <legend id={qualityId} className="text-sm font-medium text-foreground">
-                Quality
-              </legend>
-              <StarRatingPicker value={quality} onChange={setQuality} labelledBy={qualityId} />
-            </fieldset>
-            <fieldset className="mt-3">
-              <legend id={varietyId} className="text-sm font-medium text-foreground">
-                Variety
-              </legend>
-              <StarRatingPicker value={variety} onChange={setVariety} labelledBy={varietyId} />
-            </fieldset>
-            <fieldset className="mt-3">
-              <legend id={quantityId} className="text-sm font-medium text-foreground">
-                Quantity
-              </legend>
-              <StarRatingPicker value={quantity} onChange={setQuantity} labelledBy={quantityId} />
-            </fieldset>
-
-            <label htmlFor={commentId} className="mt-4 block text-sm font-medium text-foreground">
-              Comment <span className="font-normal text-foreground/55">(optional)</span>
-            </label>
-            <textarea
-              id={commentId}
-              value={comment}
-              maxLength={COMMENT_LIMIT}
-              rows={3}
-              onChange={(event) => setComment(event.target.value)}
-              placeholder="What did they hand out?"
-              className="mt-2 w-full resize-none rounded-xl border border-white/15 bg-candy-purple/30 px-3 py-2 text-base text-foreground outline-none placeholder:text-foreground/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-candy-orange"
-            />
-
-            {error ? (
-              <p role="alert" className="mt-3 text-sm text-candy-orange">
-                {error}
+            <div className="min-h-0 max-h-[min(52dvh,26rem)] overflow-y-auto overscroll-y-contain pr-0.5 touch-pan-y">
+              <p className="text-sm text-foreground/75">
+                Score candy quality, variety, and quantity. A comment is optional.
               </p>
-            ) : null}
 
-            <div className="mt-4 flex gap-2">
+              <fieldset className="mt-4">
+                <legend id={qualityId} className="text-sm font-medium text-foreground">
+                  Quality
+                </legend>
+                <StarRatingPicker value={quality} onChange={setQualityScore} labelledBy={qualityId} />
+              </fieldset>
+              <fieldset className="mt-3">
+                <legend id={varietyId} className="text-sm font-medium text-foreground">
+                  Variety
+                </legend>
+                <StarRatingPicker value={variety} onChange={setVarietyScore} labelledBy={varietyId} />
+              </fieldset>
+              <fieldset className="mt-3">
+                <legend id={quantityId} className="text-sm font-medium text-foreground">
+                  Quantity
+                </legend>
+                <StarRatingPicker value={quantity} onChange={setQuantityScore} labelledBy={quantityId} />
+              </fieldset>
+
+              <label htmlFor={commentId} className="mt-4 block text-sm font-medium text-foreground">
+                Comment <span className="font-normal text-foreground/55">(optional)</span>
+              </label>
+              <textarea
+                id={commentId}
+                value={comment}
+                maxLength={COMMENT_LIMIT}
+                rows={3}
+                onChange={(event) => setComment(event.target.value)}
+                placeholder="What did they hand out?"
+                className="mt-2 w-full resize-none rounded-xl border border-white/15 bg-candy-purple/30 px-3 py-2 text-base text-foreground outline-none placeholder:text-foreground/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-candy-orange"
+              />
+
+              {error ? (
+                <p role="alert" className="mt-3 text-sm text-candy-orange">
+                  {error}
+                </p>
+              ) : null}
+            </div>
+
+            <div className="mt-4 flex shrink-0 gap-2 border-t border-white/10 bg-candy-black pt-4">
               <button
                 type="button"
                 onClick={close}

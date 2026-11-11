@@ -40,7 +40,7 @@ export function StarRatingPicker({ value, onChange, labelledBy }: StarRatingPick
             aria-checked={value === star}
             aria-label={`${star} star${star === 1 ? "" : "s"}`}
             tabIndex={tabbable ? 0 : -1}
-            onClick={() => onChange(Math.min(star, 4))}
+            onClick={() => onChange(star)}
             className={
               selected
                 ? "flex h-11 w-11 items-center justify-center rounded-full bg-candy-orange text-lg text-candy-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground"
