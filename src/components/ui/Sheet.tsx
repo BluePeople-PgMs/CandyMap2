@@ -41,14 +41,18 @@ export function Sheet({ title, titleId, onClose, children }: SheetProps) {
         aria-modal="true"
         aria-labelledby={titleId}
         tabIndex={-1}
-        className="relative z-10 max-h-[88dvh] w-full max-w-lg overflow-y-auto rounded-t-3xl border border-candy-orange/35 bg-candy-black px-4 pt-3 shadow-[0_-16px_40px_rgba(0,0,0,0.5)] outline-none"
+        className="relative z-10 flex max-h-[88dvh] w-full max-w-lg flex-col overflow-hidden rounded-t-3xl border border-candy-orange/35 bg-candy-black shadow-[0_-16px_40px_rgba(0,0,0,0.5)] outline-none"
         style={{ paddingBottom: "calc(1rem + env(safe-area-inset-bottom))" }}
       >
-        <div className="mx-auto mb-3 h-1 w-10 rounded-full bg-foreground/25" aria-hidden="true" />
-        <h2 id={titleId} className="font-display text-3xl leading-none text-foreground">
-          {title}
-        </h2>
-        {children}
+        <div className="shrink-0 px-4 pt-3">
+          <div className="mx-auto mb-3 h-1 w-10 rounded-full bg-foreground/25" aria-hidden="true" />
+          <h2 id={titleId} className="font-display text-3xl leading-none text-foreground">
+            {title}
+          </h2>
+        </div>
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-y-contain px-4 touch-pan-y">
+          {children}
+        </div>
       </div>
     </div>
   );

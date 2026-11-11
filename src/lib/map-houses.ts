@@ -2,7 +2,12 @@ import { MOCK_NEIGHBORHOODS } from "../data/neighborhoods";
 import type { House } from "../types";
 import { formatHouseName } from "./address";
 import { getSeedHouseById, getSeedHouses } from "./catalog";
-import { applyUserRatingsToHouses, createRating, scoresFromStars } from "./ratings";
+import {
+  applyUserRatingsToHouses,
+  createRating,
+  isValidStarRatingScore,
+  scoresFromStars,
+} from "./ratings";
 import { STORAGE_KEYS, readUserRatings, writeUserRatings } from "./storage";
 import {
   PINNED_NEIGHBORHOOD_ID,
@@ -218,7 +223,7 @@ export function savePinnedHouse(input: {
 }
 
 function isWholeScore(value: number): boolean {
-  return Number.isInteger(value) && value >= 1 && value <= 5;
+  return isValidStarRatingScore(value);
 }
 
 /**

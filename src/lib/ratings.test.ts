@@ -4,6 +4,7 @@ import {
   applyUserRatingsToHouses,
   calculateOverallRating,
   createRating,
+  isValidStarRatingScore,
   mergeAverages,
   scoresFromStars,
 } from "./ratings.ts";
@@ -27,6 +28,16 @@ const sampleHouse: House = {
   },
   comments: [],
 };
+
+describe("isValidStarRatingScore", () => {
+  it("accepts whole-star ratings from 1 through 5", () => {
+    assert.equal(isValidStarRatingScore(1), true);
+    assert.equal(isValidStarRatingScore(5), true);
+    assert.equal(isValidStarRatingScore(0), false);
+    assert.equal(isValidStarRatingScore(6), false);
+    assert.equal(isValidStarRatingScore(4.5), false);
+  });
+});
 
 describe("calculateOverallRating", () => {
   it("averages the three dimensions to one decimal", () => {
