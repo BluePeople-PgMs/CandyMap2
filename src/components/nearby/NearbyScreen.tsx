@@ -4,12 +4,27 @@ import { useMemo, useState, useSyncExternalStore } from "react";
 import { DEMO_MAP_CENTER } from "@/data";
 import { distanceMeters } from "@/lib/geo";
 import { getMapHouses, subscribeMapHouses } from "@/lib/map-houses";
+import { CANDY_TYPE_LABELS } from "@/types/candy";
 import type { House } from "@/types";
 import { HouseCard } from "@/components/house/HouseCard";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { ListSkeleton } from "@/components/ui/ListSkeleton";
 
 const EMPTY_HOUSES: House[] = [];
+
+function houseMatchesQuery(house: House, needle: string): boolean {
+  if (house.name.toLowerCase().includes(needle)) {
+    return true;
+  }
+  if (house.address.toLowerCase().includes(needle)) {
+    return true;
+  }
+
+  return house.candyTypes.some((type) => {
+    const label = CANDY_TYPE_LABELS[type].toLowerCase();
+    return type.includes(needle) || label.includes(needle);
+  });
+}
 
 export function NearbyScreen() {
   const ready = useSyncExternalStore(subscribeMapHouses, () => true, () => false);
@@ -18,7 +33,9 @@ export function NearbyScreen() {
 
   const visible = useMemo(() => {
     const needle = query.trim().toLowerCase();
-    const matched = needle ? [] : houses;
+    const matched = needle
+      ? houses.filter((house) => houseMatchesQuery(house, needle))
+      : houses;
 
     return [...matched].sort(
       (a, b) =>
