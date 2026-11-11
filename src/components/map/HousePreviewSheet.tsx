@@ -8,6 +8,7 @@ import type { House } from "@/types";
 import { RatingSheet } from "@/components/house/RatingSheet";
 import { CandyChips } from "@/components/ui/CandyChips";
 import { CandyTagChips } from "@/components/ui/CandyTagChips";
+import { CopyAddressButton } from "@/components/ui/CopyAddressButton";
 import { ScoreBadge } from "@/components/ui/ScoreBadge";
 
 type HousePreviewSheetProps = {
@@ -61,7 +62,11 @@ export function HousePreviewSheet({ house, onClose }: HousePreviewSheetProps) {
             <h2 id="house-preview-title" className="truncate font-display text-2xl leading-none text-foreground">
               {house.name}
             </h2>
-            <p className="mt-1 text-sm text-foreground/70">{placeName(house.neighborhoodId)}</p>
+            <div className="mt-2 flex items-start gap-2">
+              <p className="min-w-0 flex-1 text-sm text-foreground/70">{house.address}</p>
+              <CopyAddressButton address={house.address} />
+            </div>
+            <p className="mt-1 text-sm text-foreground/60">{placeName(house.neighborhoodId)}</p>
           </div>
           <button
             type="button"
