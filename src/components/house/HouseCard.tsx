@@ -4,6 +4,7 @@ import { PINNED_NEIGHBORHOOD_ID } from "@/lib/user-houses";
 import type { House } from "@/types";
 import { CandyChips } from "@/components/ui/CandyChips";
 import { CandyTagChips } from "@/components/ui/CandyTagChips";
+import { isPodiumRank, RankMedal } from "@/components/ui/RankMedal";
 import { ScoreBadge } from "@/components/ui/ScoreBadge";
 
 function placeName(neighborhoodId: string): string {
@@ -44,9 +45,13 @@ export function HouseCard({ house, distanceMeters, rank }: HouseCardProps) {
       >
         <div className="flex items-start gap-3">
           {rank ? (
-            <span className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-candy-orange text-sm font-semibold text-candy-black">
-              {rank}
-            </span>
+            isPodiumRank(rank) ? (
+              <RankMedal rank={rank} />
+            ) : (
+              <span className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-candy-orange text-sm font-semibold text-candy-black">
+                {rank}
+              </span>
+            )
           ) : (
             <p className="text-3xl leading-none" aria-hidden="true">
               {house.photoEmoji || "🎃"}
