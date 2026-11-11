@@ -14,6 +14,7 @@ import {
   MAP_ZOOM,
   PINNED_NEIGHBORHOOD_ID,
   readSavedMapView,
+  savePinnedHouse,
   subscribeMapHouses,
   writeSavedMapView,
 } from "@/lib";
@@ -418,11 +419,40 @@ export default function CandyMapCanvas() {
     candyTags: CandyTag[];
     stars: number;
   }) => {
-    if (!draft || input.stars < 0) {
+    if (!draft) {
       return;
     }
 
-    setSaveError("Could not save this house. Try again later.");
+    const spot = { lat: draft.lat, lng: draft.lng };
+    const result = savePinnedHouse({
+      streetNumber: input.streetNumber,
+      streetName: input.streetName,
+      lat: spot.lat,
+      lng: spot.lng,
+      candyTags: input.candyTags,
+      stars: input.stars,
+    });
+
+    if (!result.ok) {
+      setSaveError(
+        result.reason === "storage"
+          ? "This browser could not store the house. Nothing was saved."
+          : "Add a street number, street name, star rating, and at least one candy tag.",
+      );
+      return;
+    }
+
+    setSaveError(null);
+    setSelectedId(null);
+    setDraft(null);
+    setSavedSpot(spot);
+    setNotice({ message: "House added! 🎃" });
+    if (successTimer.current !== null) {
+      window.clearTimeout(successTimer.current);
+    }
+    successTimer.current = window.setTimeout(() => {
+      setNotice((current) => (current?.message === "House added! 🎃" ? null : current));
+    }, 2800);
   };
 
   const recenter = () => {
