@@ -1,6 +1,7 @@
 "use client";
 
 import { useId, useState } from "react";
+import { scoresFromStars } from "@/lib/ratings";
 import { submitHouseRating } from "@/lib/map-houses";
 import { Sheet } from "@/components/ui/Sheet";
 import { StarRatingPicker } from "@/components/ui/StarRatingPicker";
@@ -9,25 +10,20 @@ const COMMENT_LIMIT = 280;
 
 export function RatingSheet({ houseId }: { houseId: string }) {
   const titleId = useId();
-  const qualityId = useId();
-  const varietyId = useId();
-  const quantityId = useId();
+  const ratingId = useId();
   const commentId = useId();
   const [open, setOpen] = useState(false);
-  const [quality, setQuality] = useState(0);
-  const [variety, setVariety] = useState(0);
-  const [quantity, setQuantity] = useState(0);
+  const [stars, setStars] = useState(0);
   const [comment, setComment] = useState("");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [status, setStatus] = useState<string | null>(null);
 
-  const ready = quality >= 1 && variety >= 1 && quantity >= 1;
+  const hasRequiredRatings = stars >= 1 && stars <= 5;
+  const trimmedComment = comment.trim();
 
   function resetForm() {
-    setQuality(0);
-    setVariety(0);
-    setQuantity(0);
+    setStars(0);
     setComment("");
     setError(null);
     setSaving(false);
@@ -65,18 +61,17 @@ export function RatingSheet({ houseId }: { houseId: string }) {
             className="mt-4"
             onSubmit={(event) => {
               event.preventDefault();
-              if (!ready || saving) {
+              if (!hasRequiredRatings || saving) {
                 return;
               }
 
               setSaving(true);
               setError(null);
+              const scores = scoresFromStars(stars);
               const saved = submitHouseRating({
                 houseId,
-                quality,
-                variety,
-                quantity,
-                comment,
+                ...scores,
+                comment: trimmedComment || undefined,
               });
               setSaving(false);
 
@@ -90,26 +85,14 @@ export function RatingSheet({ houseId }: { houseId: string }) {
             }}
           >
             <p className="text-sm text-foreground/75">
-              Score candy quality, variety, and quantity. A comment is optional.
+              Choose a star rating from 1 to 5. A comment is optional.
             </p>
 
             <fieldset className="mt-4">
-              <legend id={qualityId} className="text-sm font-medium text-foreground">
-                Quality
+              <legend id={ratingId} className="text-sm font-medium text-foreground">
+                Rating <span className="font-normal text-foreground/55">(required)</span>
               </legend>
-              <StarRatingPicker value={quality} onChange={setQuality} labelledBy={qualityId} />
-            </fieldset>
-            <fieldset className="mt-3">
-              <legend id={varietyId} className="text-sm font-medium text-foreground">
-                Variety
-              </legend>
-              <StarRatingPicker value={variety} onChange={setVariety} labelledBy={varietyId} />
-            </fieldset>
-            <fieldset className="mt-3">
-              <legend id={quantityId} className="text-sm font-medium text-foreground">
-                Quantity
-              </legend>
-              <StarRatingPicker value={quantity} onChange={setQuantity} labelledBy={quantityId} />
+              <StarRatingPicker value={stars} onChange={setStars} labelledBy={ratingId} />
             </fieldset>
 
             <label htmlFor={commentId} className="mt-4 block text-sm font-medium text-foreground">
@@ -141,7 +124,7 @@ export function RatingSheet({ houseId }: { houseId: string }) {
               </button>
               <button
                 type="submit"
-                disabled={!ready || saving}
+                disabled={!hasRequiredRatings || saving}
                 className="min-h-11 flex-[1.4] rounded-xl bg-candy-orange px-3 text-sm font-semibold text-candy-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground disabled:opacity-45"
               >
                 {saving ? "Saving…" : "Save rating"}
