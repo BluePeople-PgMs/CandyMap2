@@ -9,8 +9,10 @@ import { setWorkerUrl } from "maplibre-gl";
 import { CircleMarker, Marker, ZoomControl, useMap, useMapEvents } from "react-leaflet";
 import { DEMO_MAP_CENTER, getNeighborhoodById } from "@/data";
 import {
+  demoHousePositionsForFit,
   getMapHouses,
   isWithinRadius,
+  MAP_FIT_PADDING_OPTIONS,
   MAP_ZOOM,
   PINNED_NEIGHBORHOOD_ID,
   readSavedMapView,
@@ -255,10 +257,23 @@ function MapInteractions({
       return;
     }
 
-    map.setView(DEMO_CENTER, DEMO_MAP_CENTER.zoom, {
-      animate: !prefersReducedMotion(),
+    const animate = !prefersReducedMotion();
+    const positions = demoHousePositionsForFit(
+      houses,
+      DEMO_MAP_CENTER,
+      LOCATION_FIT_RADIUS_METERS,
+    );
+    if (positions.length === 0) {
+      map.setView(DEMO_CENTER, DEMO_MAP_CENTER.zoom, { animate });
+      return;
+    }
+
+    map.fitBounds(positions as LatLngBoundsExpression, {
+      ...MAP_FIT_PADDING_OPTIONS,
+      maxZoom: DEMO_MAP_CENTER.zoom,
+      animate,
     });
-  }, [recenterToken, map]);
+  }, [recenterToken, houses, map]);
 
   const focusKey = selectedHouse
     ? selectedHouse.id
@@ -289,18 +304,17 @@ function MapInteractions({
       return;
     }
 
-    const bounds = houses
-      .filter((house) =>
-        isWithinRadius(house.lat, house.lng, DEMO_MAP_CENTER, LOCATION_FIT_RADIUS_METERS),
-      )
-      .map((house) => [house.lat, house.lng] as [number, number]);
+    const bounds = demoHousePositionsForFit(
+      houses,
+      DEMO_MAP_CENTER,
+      LOCATION_FIT_RADIUS_METERS,
+    );
     if (bounds.length === 0) {
       return;
     }
     bounds.push([userLocation.lat, userLocation.lng]);
     map.fitBounds(bounds as LatLngBoundsExpression, {
-      paddingTopLeft: [56, 88],
-      paddingBottomRight: [56, 48],
+      ...MAP_FIT_PADDING_OPTIONS,
       maxZoom: DEMO_MAP_CENTER.zoom,
       animate: !prefersReducedMotion(),
     });
@@ -425,7 +439,7 @@ export default function CandyMapCanvas() {
     setSaveError("Could not save this house. Try again later.");
   };
 
-  const recenter = () => {
+  const resetMapView = () => {
     setSelectedId(null);
     setDraft(null);
     setSavedSpot(null);
@@ -573,7 +587,7 @@ export default function CandyMapCanvas() {
 
       <div className="pointer-events-none absolute inset-0 z-10">
         <div className="pointer-events-none absolute top-3 right-3 z-30 flex flex-col gap-2">
-          <MapControlButton label="Recenter on demo houses" onClick={recenter}>
+          <MapControlButton label="Reset map view" onClick={resetMapView}>
             <CrosshairIcon />
           </MapControlButton>
           <MapControlButton
