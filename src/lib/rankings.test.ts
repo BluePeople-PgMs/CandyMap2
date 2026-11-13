@@ -3,6 +3,7 @@ import { describe, it } from "node:test";
 import {
   computeNeighborhoodStats,
   getTopRatedHouses,
+  neighborhoodHasRatedHouses,
   rankHousesByRating,
   rankNeighborhoodsByAverage,
 } from "./rankings.ts";
@@ -122,6 +123,23 @@ describe("rankNeighborhoodsByAverage", () => {
     );
     assert.equal(stats.houseCount, 2);
     assert.equal(stats.averageOverall, 4);
+  });
+
+  it("counts every house in the neighborhood, even with ratingCount 0", () => {
+    const unrated: House = {
+      ...fixtureHouses[0]!,
+      id: "unrated",
+      ratingCount: 0,
+      averages: { quality: 0, variety: 0, quantity: 0, overall: 0 },
+    };
+    const mixed = [unrated, fixtureHouses[1]!];
+    const stats = computeNeighborhoodStats(fixtureNeighborhoods[0]!, mixed);
+    assert.equal(stats.houseCount, 2);
+    assert.equal(neighborhoodHasRatedHouses("willow-grove", mixed), true);
+    assert.equal(
+      neighborhoodHasRatedHouses("willow-grove", [unrated]),
+      false,
+    );
   });
 });
 

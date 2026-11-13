@@ -3,7 +3,12 @@
 import { useMemo, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { getMapHouses, subscribeMapHouses } from "@/lib/map-houses";
-import { rankHousesByRating, rankNeighborhoodsByAverage } from "@/lib/rankings";
+import { formatHouseCount } from "@/lib/copy";
+import {
+  neighborhoodHasRatedHouses,
+  rankHousesByRating,
+  rankNeighborhoodsByAverage,
+} from "@/lib/rankings";
 import { getSeedNeighborhoods } from "@/lib/catalog";
 import { PINNED_NEIGHBORHOOD_ID } from "@/lib/user-houses";
 import type { House, Neighborhood } from "@/types";
@@ -38,7 +43,7 @@ export function RankingsScreen() {
     () => rankHousesByRating(houses).filter((house) => house.ratingCount > 0),
     [houses],
   );
-  const hasRatings = houses.some((house) => house.ratingCount > 0);
+  const hasNeighborhoodList = neighborhoods.some((neighborhood) => neighborhood.houseCount > 0);
 
   return (
     <main className="min-h-0 flex-1 overflow-y-auto">
@@ -94,38 +99,41 @@ export function RankingsScreen() {
             aria-labelledby="tab-neighborhoods"
             className="mt-4"
           >
-            {!hasRatings ? (
+            {!hasNeighborhoodList ? (
               <EmptyState
                 emoji="🏆"
-                title="No rankings yet"
-                description="Rate a house to start the neighborhood leaderboard."
+                title="No neighborhoods yet"
+                description="Add a house on the map to populate neighborhood lists."
               />
             ) : (
               <ol className="list-none space-y-3">
-                {neighborhoods.map((neighborhood) => (
-                  <li key={neighborhood.id}>
-                    <Link
-                      href={`/neighborhoods/${neighborhood.id}`}
-                      className="flex min-h-11 items-center gap-3 rounded-2xl border border-candy-orange/25 bg-candy-purple/30 px-4 py-3 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-candy-orange"
-                    >
-                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-candy-orange text-sm font-semibold text-candy-black">
-                        {neighborhood.rank}
-                      </span>
-                      <span className="min-w-0 flex-1">
-                        <span className="block truncate font-display text-2xl leading-none text-foreground">
-                          {neighborhood.name}
+                {neighborhoods
+                  .filter((neighborhood) => neighborhood.houseCount > 0)
+                  .map((neighborhood) => (
+                    <li key={neighborhood.id}>
+                      <Link
+                        href={`/neighborhoods/${neighborhood.id}`}
+                        className="flex min-h-11 items-center gap-3 rounded-2xl border border-candy-orange/25 bg-candy-purple/30 px-4 py-3 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-candy-orange"
+                      >
+                        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-candy-orange text-sm font-semibold text-candy-black">
+                          {neighborhood.rank}
                         </span>
-                        <span className="mt-1 block text-xs text-foreground/60">
-                          {neighborhood.houseCount}{" "}
-                          {neighborhood.houseCount === 1 ? "house" : "houses"}
+                        <span className="min-w-0 flex-1">
+                          <span className="block truncate font-display text-2xl leading-none text-foreground">
+                            {neighborhood.name}
+                          </span>
+                          <span className="mt-1 block text-xs text-foreground/60">
+                            {formatHouseCount(neighborhood.houseCount)}
+                          </span>
                         </span>
-                      </span>
-                      <span className="text-sm font-semibold text-candy-orange">
-                        {neighborhood.averageOverall.toFixed(1)}
-                      </span>
-                    </Link>
-                  </li>
-                ))}
+                        <span className="text-sm font-semibold text-candy-orange">
+                          {neighborhoodHasRatedHouses(neighborhood.id, houses)
+                            ? neighborhood.averageOverall.toFixed(1)
+                            : "—"}
+                        </span>
+                      </Link>
+                    </li>
+                  ))}
               </ol>
             )}
           </div>

@@ -3,7 +3,12 @@
 import { useMemo, useSyncExternalStore } from "react";
 import { getNeighborhoodById } from "@/data";
 import { getMapHouses, subscribeMapHouses } from "@/lib/map-houses";
-import { computeNeighborhoodStats, rankHousesByRating } from "@/lib/rankings";
+import { formatHouseCount } from "@/lib/copy";
+import {
+  computeNeighborhoodStats,
+  neighborhoodHasRatedHouses,
+  rankHousesByRating,
+} from "@/lib/rankings";
 import { PINNED_NEIGHBORHOOD_ID } from "@/lib/user-houses";
 import type { House, Neighborhood } from "@/types";
 import { HouseCard } from "@/components/house/HouseCard";
@@ -59,11 +64,14 @@ export function NeighborhoodDetailView({ neighborhoodId }: { neighborhoodId: str
               {neighborhood.name}
             </h1>
             <p className="mt-3 text-sm text-foreground/75">{neighborhood.description}</p>
-            {stats && stats.houseCount > 0 ? (
+            {stats &&
+            members.length > 0 &&
+            neighborhoodHasRatedHouses(neighborhoodId, houses) ? (
               <p className="mt-3 text-sm font-semibold text-candy-orange">
-                {stats.averageOverall.toFixed(1)} overall · {stats.houseCount}{" "}
-                {stats.houseCount === 1 ? "house" : "houses"}
+                {stats.averageOverall.toFixed(1)} overall
               </p>
+            ) : members.length > 0 ? (
+              <p className="mt-3 text-sm text-foreground/50">No ratings yet</p>
             ) : null}
 
             {!ready ? (
@@ -79,11 +87,16 @@ export function NeighborhoodDetailView({ neighborhoodId }: { neighborhoodId: str
                 />
               </div>
             ) : (
-              <ul className="mt-5 list-none space-y-3">
-                {members.map((house) => (
-                  <HouseCard key={house.id} house={house} />
-                ))}
-              </ul>
+              <>
+                <h2 className="mt-5 text-xs font-semibold uppercase tracking-wide text-foreground/50">
+                  {formatHouseCount(members.length)}
+                </h2>
+                <ul className="mt-3 list-none space-y-3">
+                  {members.map((house) => (
+                    <HouseCard key={house.id} house={house} />
+                  ))}
+                </ul>
+              </>
             )}
           </>
         )}

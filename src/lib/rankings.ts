@@ -1,6 +1,16 @@
 import type { House, Neighborhood, RankedNeighborhood } from "../types";
 import { roundToOneDecimal } from "./ratings.ts";
 
+/** True when at least one house in the neighborhood has a user or seed rating. */
+export function neighborhoodHasRatedHouses(
+  neighborhoodId: string,
+  houses: readonly House[],
+): boolean {
+  return houses.some(
+    (house) => house.neighborhoodId === neighborhoodId && house.ratingCount > 0,
+  );
+}
+
 function compareByOverallThenCount(a: House, b: House): number {
   if (b.averages.overall !== a.averages.overall) {
     return b.averages.overall - a.averages.overall;
