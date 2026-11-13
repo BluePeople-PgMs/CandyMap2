@@ -25,7 +25,7 @@ const PINNED_NEIGHBORHOOD: Neighborhood = {
 export function RankingsScreen() {
   const ready = useSyncExternalStore(subscribeMapHouses, () => true, () => false);
   const houses = useSyncExternalStore(subscribeMapHouses, getMapHouses, () => EMPTY_HOUSES);
-  const [tab, setTab] = useState<"neighborhoods" | "houses">("neighborhoods");
+  const [tab, setTab] = useState<"neighborhoods" | "houses">("houses");
 
   const neighborhoods = useMemo(() => {
     const base = getSeedNeighborhoods();

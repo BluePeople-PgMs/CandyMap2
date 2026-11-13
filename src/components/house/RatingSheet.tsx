@@ -12,6 +12,7 @@ export function RatingSheet({ houseId }: { houseId: string }) {
   const titleId = useId();
   const ratingId = useId();
   const commentId = useId();
+  const commentCounterId = useId();
   const [open, setOpen] = useState(false);
   const [stars, setStars] = useState(0);
   const [comment, setComment] = useState("");
@@ -21,6 +22,8 @@ export function RatingSheet({ houseId }: { houseId: string }) {
 
   const hasRequiredRatings = isValidStarRatingScore(stars);
   const trimmedComment = comment.trim();
+  const charactersRemaining = COMMENT_LIMIT - comment.length;
+  const nearLimit = charactersRemaining <= 20;
 
   function resetForm() {
     setStars(0);
@@ -96,14 +99,28 @@ export function RatingSheet({ houseId }: { houseId: string }) {
                 <StarRatingPicker value={stars} onChange={setStars} labelledBy={ratingId} />
               </fieldset>
 
-              <label htmlFor={commentId} className="mt-4 block text-sm font-medium text-foreground">
-                Comment <span className="font-normal text-foreground/55">(optional)</span>
-              </label>
+              <div className="mt-4 flex items-baseline justify-between gap-2">
+                <label htmlFor={commentId} className="text-sm font-medium text-foreground">
+                  Comment <span className="font-normal text-foreground/55">(optional)</span>
+                </label>
+                <span
+                  id={commentCounterId}
+                  aria-live="polite"
+                  className={
+                    nearLimit
+                      ? "text-xs font-medium tabular-nums text-candy-orange"
+                      : "text-xs tabular-nums text-foreground/55"
+                  }
+                >
+                  {comment.length} / {COMMENT_LIMIT}
+                </span>
+              </div>
               <textarea
                 id={commentId}
                 value={comment}
                 maxLength={COMMENT_LIMIT}
                 rows={3}
+                aria-describedby={commentCounterId}
                 onChange={(event) => setComment(event.target.value)}
                 placeholder="What did they hand out?"
                 className="mt-2 w-full resize-none rounded-xl border border-white/15 bg-candy-purple/30 px-3 py-2 text-base text-foreground outline-none placeholder:text-foreground/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-candy-orange"

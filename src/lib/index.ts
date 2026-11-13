@@ -50,8 +50,14 @@ export {
 export { formatHouseName, streetAddressFromNominatim } from "./address";
 export type { StreetAddress } from "./address";
 
-export { MAP_ZOOM, readSavedMapView, writeSavedMapView } from "./map-view";
-export type { SavedMapView } from "./map-view";
+export {
+  MAP_FIT_PADDING_OPTIONS,
+  MAP_ZOOM,
+  demoHousePositionsForFit,
+  readSavedMapView,
+  writeSavedMapView,
+} from "./map-view";
+export type { MapLatLng, SavedMapView } from "./map-view";
 
 export {
   getMapHouses,

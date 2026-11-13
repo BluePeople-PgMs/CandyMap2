@@ -1,4 +1,27 @@
-import { STORAGE_KEYS } from "./storage";
+import { isWithinRadius } from "./geo.ts";
+import { STORAGE_KEYS } from "./storage.ts";
+
+export type MapLatLng = {
+  lat: number;
+  lng: number;
+};
+
+/** Padding so house markers stay clear of map chrome (controls, sheets). */
+export const MAP_FIT_PADDING_OPTIONS = {
+  paddingTopLeft: [56, 88] as [number, number],
+  paddingBottomRight: [56, 48] as [number, number],
+};
+
+/** Positions for fitBounds when resetting or framing the demo cluster. */
+export function demoHousePositionsForFit(
+  houses: ReadonlyArray<MapLatLng>,
+  demoCenter: MapLatLng,
+  radiusMeters: number,
+): [number, number][] {
+  return houses
+    .filter((house) => isWithinRadius(house.lat, house.lng, demoCenter, radiusMeters))
+    .map((house) => [house.lat, house.lng]);
+}
 
 export type SavedMapView = {
   lat: number;

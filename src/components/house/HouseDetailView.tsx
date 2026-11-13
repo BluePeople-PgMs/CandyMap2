@@ -10,6 +10,7 @@ import { CandyChips } from "@/components/ui/CandyChips";
 import { CandyTagChips } from "@/components/ui/CandyTagChips";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { ListSkeleton } from "@/components/ui/ListSkeleton";
+import { CopyAddressButton } from "@/components/ui/CopyAddressButton";
 import { ScoreBadge } from "@/components/ui/ScoreBadge";
 
 const EMPTY_HOUSES: House[] = [];
@@ -100,7 +101,10 @@ export function HouseDetailView({
           <h1 className="mt-3 font-display text-4xl leading-none text-foreground sm:text-5xl">
             {house.name}
           </h1>
-          <p className="mt-3 text-sm text-foreground/80">{house.address}</p>
+          <div className="mt-3 flex items-start gap-2">
+            <p className="min-w-0 flex-1 text-sm text-foreground/80">{house.address}</p>
+            <CopyAddressButton address={house.address} />
+          </div>
           <p className="mt-1 text-sm text-candy-orange">{neighborhoodName}</p>
 
           <div className="mt-5">

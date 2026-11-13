@@ -1,10 +1,11 @@
 "use client";
 
 import { useMemo, useState, useSyncExternalStore } from "react";
-import { DEMO_MAP_CENTER } from "@/data";
+import { DEMO_MAP_CENTER, getNeighborhoodById } from "@/data";
 import { distanceMeters } from "@/lib/geo";
 import { getMapHouses, subscribeMapHouses } from "@/lib/map-houses";
-import { CANDY_TYPE_LABELS } from "@/types/candy";
+import { filterNearbyHouses } from "@/lib/nearby-search";
+import { PINNED_NEIGHBORHOOD_ID } from "@/lib/user-houses";
 import type { House } from "@/types";
 import { HouseCard } from "@/components/house/HouseCard";
 import { EmptyState } from "@/components/ui/EmptyState";
@@ -12,18 +13,20 @@ import { ListSkeleton } from "@/components/ui/ListSkeleton";
 
 const EMPTY_HOUSES: House[] = [];
 
-function houseMatchesQuery(house: House, needle: string): boolean {
-  if (house.name.toLowerCase().includes(needle)) {
-    return true;
-  }
-  if (house.address.toLowerCase().includes(needle)) {
-    return true;
+function neighborhoodName(neighborhoodId: string): string {
+  if (neighborhoodId === PINNED_NEIGHBORHOOD_ID) {
+    return "Pinned location";
   }
 
-  return house.candyTypes.some((type) => {
-    const label = CANDY_TYPE_LABELS[type].toLowerCase();
-    return type.includes(needle) || label.includes(needle);
-  });
+  return getNeighborhoodById(neighborhoodId)?.name ?? "Pinned location";
+}
+
+function formatMatchCount(count: number): string {
+  if (count === 1) {
+    return "1 house matches";
+  }
+
+  return `${count} houses match`;
 }
 
 export function NearbyScreen() {
@@ -31,11 +34,10 @@ export function NearbyScreen() {
   const houses = useSyncExternalStore(subscribeMapHouses, getMapHouses, () => EMPTY_HOUSES);
   const [query, setQuery] = useState("");
 
+  const searchActive = query.trim().length > 0;
+
   const visible = useMemo(() => {
-    const needle = query.trim().toLowerCase();
-    const matched = needle
-      ? houses.filter((house) => houseMatchesQuery(house, needle))
-      : houses;
+    const matched = filterNearbyHouses(houses, query, neighborhoodName);
 
     return [...matched].sort(
       (a, b) =>
@@ -62,6 +64,16 @@ export function NearbyScreen() {
           className="mt-4 min-h-11 w-full rounded-xl border border-candy-orange/30 bg-candy-purple/25 px-3 text-base text-foreground outline-none placeholder:text-foreground/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-candy-orange"
         />
 
+        {searchActive ? (
+          <p
+            className="mt-2 text-sm text-foreground/70"
+            aria-live="polite"
+            aria-atomic="true"
+          >
+            {formatMatchCount(visible.length)}
+          </p>
+        ) : null}
+
         {!ready ? (
           <div className="mt-4">
             <ListSkeleton />
@@ -74,7 +86,7 @@ export function NearbyScreen() {
               description="The demo map does not have any stops yet."
             />
           </div>
-        ) : visible.length === 0 ? (
+        ) : searchActive && visible.length === 0 ? (
           <div className="mt-4">
             <EmptyState
               emoji="🔍"
