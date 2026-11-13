@@ -3,6 +3,11 @@ import type { House, HouseAverages, Rating, RatingInput, RatingScores } from "..
 const SCORE_MIN = 1;
 const SCORE_MAX = 5;
 
+/** Whole-star input is valid for submitting a rating (1 through 5). */
+export function isValidStarRatingScore(value: number): boolean {
+  return Number.isInteger(value) && value >= SCORE_MIN && value <= SCORE_MAX;
+}
+
 /** Clamp a score into the 1–5 range used across CandyMap. */
 export function clampScore(value: number): number {
   if (Number.isNaN(value)) {
